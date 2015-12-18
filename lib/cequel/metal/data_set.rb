@@ -611,17 +611,31 @@ module Cequel
           .append(*row_specifications_cql)
           .append(sort_order_cql)
           .append(limit_cql)
-          .args
+
+        statement = statement.append(" ALLOW FILTERING") if should_allow_filtering?
+
+        statement.args
       end
 
       #
       # @return [String] CQL statement to get count of rows in this data set
       #
       def count_cql
-        Statement.new
+        statement = Statement.new
           .append("SELECT COUNT(*) FROM #{table_name}")
           .append(*row_specifications_cql)
-          .append(limit_cql).args
+          .append(limit_cql)
+
+        statement = statement.append(" ALLOW FILTERING") if should_allow_filtering?
+
+        statement.args
+      end
+
+      #
+      # @return [Boolean]
+      #
+      def should_allow_filtering?
+        row_specifications_cql.first.to_s.include?('AND')
       end
 
       #

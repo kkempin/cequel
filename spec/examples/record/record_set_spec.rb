@@ -754,17 +754,6 @@ describe Cequel::Record::RecordSet do
           to eq(%w(cequel0 cequel2 cequel4))
       end
 
-      it 'should not allow multiple columns in the arguments' do
-        expect { Post.where(author_id: uuids.first, author_name: 'Mat Brown') }
-          .to raise_error(Cequel::Record::IllegalQuery)
-      end
-
-      it 'should not allow chaining of multiple columns' do
-        expect { Post.where(author_id: uuids.first).
-          where(author_name: 'Mat Brown') }.
-          to raise_error(Cequel::Record::IllegalQuery)
-      end
-
       it 'should cast argument for column' do
         expect(Post.where(author_id: uuids.first.to_s).map(&:permalink)).
           to eq(%w(cequel0 cequel2 cequel4))

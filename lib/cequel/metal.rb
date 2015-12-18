@@ -14,6 +14,7 @@ require 'cequel/metal/deleter'
 require 'cequel/metal/incrementer'
 require 'cequel/metal/inserter'
 require 'cequel/metal/updater'
+require 'cequel/metal/password'
 
 module Cequel
   #

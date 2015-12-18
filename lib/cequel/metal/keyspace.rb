@@ -32,6 +32,10 @@ module Cequel
       attr_reader :credentials
       # @return [Hash] SSL Configuration options
       attr_reader :ssl_config
+      # @return [Hash] Auth provider options
+      attr_reader :auth_provider_config
+      # @return [Hash] Datacenter options
+      attr_reader :datacenter_config
 
       #
       # @!method write(statement, *bind_vars)
@@ -136,6 +140,8 @@ module Cequel
         @max_retries  = extract_max_retries(configuration)
         @retry_delay  = extract_retry_delay(configuration)
         @ssl_config = extract_ssl_config(configuration)
+        @auth_provider_config = extract_auth_provider_config(configuration)
+        @datacenter_config = extract_datacenter_config(configuration)
 
         @name = configuration[:keyspace]
         @default_consistency = configuration[:default_consistency].try(:to_sym)
@@ -278,8 +284,10 @@ module Cequel
 
       def client_options
         {hosts: hosts, port: port}.tap do |options|
-          options.merge!(credentials) if credentials
+          options.merge!(credentials) if credentials && !auth_provider_config
           options.merge!(ssl_config) if ssl_config
+          options.merge!(auth_provider_config) if auth_provider_config
+          options.merge!(datacenter_config) if datacenter_config
         end
       end
 
@@ -336,6 +344,20 @@ module Cequel
         ssl_config[:passphrase] = configuration.fetch(:passphrase, nil)
         ssl_config.each { |key, value| ssl_config.delete(key) unless value }
         ssl_config
+      end
+
+      def extract_auth_provider_config(configuration)
+        if configuration[:username].present? && configuration[:password].present?
+          { auth_provider:
+            Cequel::Metal::Password.new(configuration[:username], configuration[:password]) }
+        end
+      end
+
+      def extract_datacenter_config(configuration)
+        datacenter_config = {}
+        datacenter_config[:datacenter] = configuration.fetch(:datacenter, nil)
+        datacenter_config.each { |key, value| datacenter_config.delete(key) unless value }
+        datacenter_config
       end
     end
   end

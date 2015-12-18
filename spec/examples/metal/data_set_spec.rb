@@ -186,7 +186,7 @@ describe Cequel::Metal::DataSet do
         row_keys.merge(categories: ['Big Data', 'Cassandra']))
       cequel[:posts].where(row_keys).
         list_prepend(:categories, 'Scalability')
-      expect(cequel[:posts].where(row_keys).first[:categories]).to eq(
+      expect(cequel[:posts].where(row_keys).first[:categories]).to match_array(
         ['Scalability', 'Big Data', 'Cassandra']
       )
     end
@@ -196,7 +196,7 @@ describe Cequel::Metal::DataSet do
         row_keys.merge(categories: ['Big Data', 'Cassandra']))
       cequel[:posts].where(row_keys).
         list_prepend(:categories, ['Scalability', 'Partition Tolerance'])
-      expect(cequel[:posts].where(row_keys).first[:categories]).to eq(
+      expect(cequel[:posts].where(row_keys).first[:categories]).to match_array(
         ['Partition Tolerance', 'Scalability', 'Big Data', 'Cassandra']
       )
     end
@@ -208,7 +208,7 @@ describe Cequel::Metal::DataSet do
         row_keys.merge(categories: ['Big Data', 'Cassandra']))
       cequel[:posts].where(row_keys).
         list_append(:categories, 'Scalability')
-      expect(cequel[:posts].where(row_keys).first[:categories]).to eq(
+      expect(cequel[:posts].where(row_keys).first[:categories]).to match_array(
         ['Big Data', 'Cassandra', 'Scalability']
       )
     end
@@ -218,7 +218,7 @@ describe Cequel::Metal::DataSet do
         row_keys.merge(categories: ['Big Data', 'Cassandra']))
       cequel[:posts].where(row_keys).
         list_append(:categories, ['Scalability', 'Partition Tolerance'])
-      expect(cequel[:posts].where(row_keys).first[:categories]).to eq(
+      expect(cequel[:posts].where(row_keys).first[:categories]).to match_array(
         ['Big Data', 'Cassandra', 'Scalability', 'Partition Tolerance']
       )
     end

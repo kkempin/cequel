@@ -779,15 +779,14 @@ module Cequel
                "Can't scope key column #{column_name} without also scoping " \
                "#{missing_column_names.join(', ')}"
         end
-        if scoped_indexed_column
-          fail IllegalQuery,
-               "Can't scope by more than one indexed column in the same query"
-        end
+
         unless column.indexed?
           fail ArgumentError,
                "Can't scope by non-indexed column #{column_name}"
         end
-        scoped(scoped_indexed_column: {column_name => column.cast(value)})
+        indexed_column = (@attributes[:scoped_indexed_column] || {}).
+          merge({column_name => column.cast(value)})
+        scoped(scoped_indexed_column: indexed_column)
       end
 
       def scoped_key_names
