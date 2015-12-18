@@ -16,6 +16,17 @@ relationships via compound primary keys and collection columns.
 The lower-level `Cequel::Metal` layer provides a CQL query builder interface
 inspired by the excellent [Sequel](http://sequel.rubyforge.org/) library.
 
+## This fork ##
+
+Includes:
+
+### Add auth_provider to support Instaclustr ###
+[https://github.com/cequel/cequel/issues/142#issuecomment-143406969](https://github.com/cequel/cequel/issues/142#issuecomment-143406969)
+
+### Add support for ALLOW FILTERING for queries and counts ####
+[http://www.datastax.com/dev/blog/allow-filtering-explained-2](http://www.datastax.com/dev/blog/allow-filtering-explained-2)
+[https://github.com/cequel/cequel/issues/208](https://github.com/cequel/cequel/issues/208)
+
 ## Installation ##
 
 Add it to your Gemfile:
