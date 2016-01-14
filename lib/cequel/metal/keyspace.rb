@@ -284,7 +284,7 @@ module Cequel
 
       def client_options
         {hosts: hosts, port: port}.tap do |options|
-          options.merge!(credentials) if credentials && !auth_provider_config
+          options.merge!(credentials) if credentials && auth_provider_config.nil?
           options.merge!(ssl_config) if ssl_config
           options.merge!(auth_provider_config) if auth_provider_config
           options.merge!(datacenter_config) if datacenter_config
@@ -347,7 +347,7 @@ module Cequel
       end
 
       def extract_auth_provider_config(configuration)
-        if configuration[:username].present? && configuration[:password].present?
+        if configuration[:username].present? && configuration[:password].present? && configuration[:password_auth_provider]
           { auth_provider:
             Cequel::Metal::Password.new(configuration[:username], configuration[:password]) }
         end
