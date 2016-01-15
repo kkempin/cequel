@@ -235,7 +235,7 @@ module Cequel
         end
         if defined? @cluster
           @cluster.close
-          remove_instance_variable(:@cluster)
+          remove_instance_variable(:@cluster) if instance_variable_defined?(:@cluster))
         end
       end
 
