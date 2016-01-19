@@ -36,6 +36,10 @@ module Cequel
       attr_reader :auth_provider_config
       # @return [Hash] Datacenter options
       attr_reader :datacenter_config
+      # @return [String] Compression algorithm
+      attr_reader :compression_config
+      # @return [String] Address resolution implementation class name
+      attr_reader :address_resolution_policy_config
 
       #
       # @!method write(statement, *bind_vars)
@@ -142,6 +146,8 @@ module Cequel
         @ssl_config = extract_ssl_config(configuration)
         @auth_provider_config = extract_auth_provider_config(configuration)
         @datacenter_config = extract_datacenter_config(configuration)
+        @compression_config = extract_compression_config(configuration)
+        @address_resolution_policy_config = extract_address_resolution_policy_config(configuration)
 
         @name = configuration[:keyspace]
         @default_consistency = configuration[:default_consistency].try(:to_sym)
@@ -288,6 +294,10 @@ module Cequel
           options.merge!(ssl_config) if ssl_config
           options.merge!(auth_provider_config) if auth_provider_config
           options.merge!(datacenter_config) if datacenter_config
+          options.merge!(compression_config) if compression_config
+          if address_resolution_policy_config
+            options.merge!(address_resolution_policy: Kernel.const_get(address_resolution_policy_config).new)
+          end
         end
       end
 
@@ -353,11 +363,22 @@ module Cequel
         end
       end
 
+      def extract_compression_config(configuration)
+        compression_config = {}
+        compression_config[:compression] = configuration.fetch(:compression, nil).try(:to_sym)
+        compression_config.each { |key, value| compression_config.delete(key) unless value }
+        compression_config
+      end
+
       def extract_datacenter_config(configuration)
         datacenter_config = {}
         datacenter_config[:datacenter] = configuration.fetch(:datacenter, nil)
         datacenter_config.each { |key, value| datacenter_config.delete(key) unless value }
         datacenter_config
+      end
+
+      def extract_address_resolution_policy_config(configuration)
+        configuration[:address_resolution_policy]
       end
     end
   end
